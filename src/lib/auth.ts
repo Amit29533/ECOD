@@ -17,8 +17,18 @@ const COOKIE_NAME = "ecod_session";
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 function secret(): string {
-  return process.env.SESSION_SECRET ?? "ecod-dev-secret-change-me";
+  const s = process.env.SESSION_SECRET;
+  if (!s && process.env.NODE_ENV === "production" && !secretWarned) {
+    secretWarned = true;
+    console.warn(
+      "[ecod] WARNING: SESSION_SECRET is not set - using the development default. " +
+        "Set a strong SESSION_SECRET before real users are on the platform.",
+    );
+  }
+  return s ?? "ecod-dev-secret-change-me";
 }
+
+let secretWarned = false;
 
 export function hashPassword(password: string): string {
   const salt = randomBytes(16).toString("hex");

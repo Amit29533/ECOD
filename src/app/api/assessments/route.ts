@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { withUser } from "@/lib/api";
+import { readJson, withUser } from "@/lib/api";
 import { createAssessment, listAssessmentsFor } from "@/lib/services";
 
 export async function GET() {
@@ -13,7 +13,8 @@ export async function GET() {
 export async function POST(request: Request) {
   return withUser(async (user) => {
     if (user.role !== "admin") return NextResponse.json({ error: "Admins only." }, { status: 403 });
-    const body = await request.json();
+    const body = await readJson(request);
+    if (!body) return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
     const { candidateId, roleCode, blueprintCode, assessorId } = body ?? {};
     if (!candidateId || !roleCode || !blueprintCode || !assessorId) {
       return NextResponse.json(

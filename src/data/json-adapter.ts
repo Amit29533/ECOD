@@ -41,7 +41,20 @@ export class JsonAdapter implements DataAdapter {
       try {
         const parsed = JSON.parse(readFileSync(this.file, "utf8")) as StoreShape;
         this.store = { ...EMPTY, ...parsed };
-      } catch {
+      } catch (err) {
+        // Corrupt store: preserve the file for forensics, quarantine it, and
+        // recover with an empty store (ensureSeeded() rebuilds content+users).
+        // Runtime records (candidates/assessments) are NOT silently regenerable -
+        // restore them from the quarantined file or a backup.
+        const quarantine = `${this.file}.corrupt-${Date.now()}`;
+        try {
+          renameSync(this.file, quarantine);
+        } catch {
+          /* best effort */
+        }
+        console.error(
+          `[ecod] data store at ${this.file} was corrupt (${(err as Error).message}); quarantined as ${quarantine}. Starting empty and re-seeding.`,
+        );
         this.store = { ...EMPTY };
       }
     } else {

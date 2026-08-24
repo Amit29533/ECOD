@@ -253,11 +253,53 @@ export async function listEnrichment(roleCode?: string): Promise<EnrichmentItem[
   });
 }
 
+/** Content schemas enforced by the admin editor - keeps bad data out of the scoring engine. */
+const CONTENT_SCHEMAS: Record<ContentCollection, Record<string, "string" | "number" | "boolean" | "array">> = {
+  roles: { code: "string", title: "string", technology: "string", passMark: "number" },
+  competencies: { roleCode: "string", code: "string", name: "string", weight: "number", threshold: "number" },
+  questions: { code: "string", type: "string", roleCode: "string", delivery: "string", competencyCodes: "array" },
+  blueprints: { code: "string", roleCode: "string", name: "string", sections: "array" },
+  enrichment: { roleCode: "string", competencyCode: "string", title: "string" },
+};
+
+function validateContent(collection: ContentCollection, records: any[]): void {
+  const schema = CONTENT_SCHEMAS[collection];
+  records.forEach((r, i) => {
+    const where = `records[${i}]`;
+    for (const [field, kind] of Object.entries(schema)) {
+      const v = r[field];
+      const bad =
+        kind === "array" ? !Array.isArray(v) :
+        kind === "number" ? typeof v !== "number" || !Number.isFinite(v) :
+        typeof v !== kind;
+      if (bad) throw new ServiceError(`${collection}.${where}: field "${field}" must be ${kind === "array" ? "an array" : `a ${kind}`}.`, 400);
+    }
+    if (collection === "questions") {
+      if (!["mcq", "multi-select", "short-answer", "case-study"].includes(r.type))
+        throw new ServiceError(`${collection}.${where}: unknown question type "${r.type}".`, 400);
+      if (!["online", "assessor"].includes(r.delivery))
+        throw new ServiceError(`${collection}.${where}: delivery must be "online" or "assessor".`, 400);
+      if ((r.type === "mcq" || r.type === "multi-select") && (!Array.isArray(r.options) || r.options.length < 2))
+        throw new ServiceError(`${collection}.${where}: ${r.type} questions need at least 2 options.`, 400);
+      if (r.type === "mcq" && typeof r.expectedAnswer !== "string")
+        throw new ServiceError(`${collection}.${where}: mcq questions need an expectedAnswer (auto-scoring).`, 400);
+      if ((r.type === "short-answer" || r.type === "case-study") && (!Array.isArray(r.rubric) || r.rubric.length === 0))
+        throw new ServiceError(`${collection}.${where}: ${r.type} questions need at least one rubric criterion.`, 400);
+    }
+    if (collection === "blueprints") {
+      for (const s of r.sections) {
+        if (!Array.isArray(s?.questionCodes)) throw new ServiceError(`${collection}.${where}: section "${s?.id}" needs questionCodes[].`, 400);
+      }
+    }
+  });
+}
+
 /** Admin content editor save: validate shape, persist, and (json mode) write files. */
 export async function saveContent(collection: ContentCollection, records: any[]): Promise<void> {
-  if (!Array.isArray(records) || records.some((r) => !r?.id)) {
-    throw new ServiceError("Content must be a JSON array of records each having an `id`.");
+  if (!Array.isArray(records) || records.some((r) => !r?.id || typeof r.id !== "string")) {
+    throw new ServiceError("Content must be a JSON array of records each having a string `id`.");
   }
+  validateContent(collection, records);
   const store = getAdapter();
   await store.replaceAll(collection, records);
   if (store.kind === "json") writeContentFile(collection, records);
@@ -358,7 +400,12 @@ export async function submitOnlineAnswers(
   if (actor.role !== "candidate") throw new ServiceError("Only candidates submit the online section.", 403);
   const candidate = await getCandidateById(assessment.candidateId);
   if (!candidate || candidate.email !== actor.email) throw new ServiceError("This is not your assessment.", 403);
-  if (["scored", "gap_mapped"].includes(assessment.status)) throw new ServiceError("Assessment already scored.", 409);
+  // Integrity lock: once the online section is submitted it is frozen - the
+  // assessor must never score moving targets, and results can't be shifted
+  // after the fact by re-answering.
+  if (!["allocated", "online_in_progress"].includes(assessment.status)) {
+    throw new ServiceError(`Online section already submitted (status: ${assessment.status}).`, 409);
+  }
 
   const blueprint = await getBlueprintByCode(assessment.blueprintCode);
   if (!blueprint) throw new ServiceError("Blueprint missing.", 500);
@@ -384,7 +431,6 @@ export async function submitOnlineAnswers(
     });
   }
   const allAnswered = scored.length === validCodes.size;
-
   const nextStatus: Assessment["status"] = allAnswered ? "online_complete" : "online_in_progress";
   assertAssessmentTransition(assessment.status, nextStatus);
   const updated: Assessment = {
@@ -395,10 +441,6 @@ export async function submitOnlineAnswers(
     onlineCompletedAt: allAnswered ? now : undefined,
     updatedAt: now,
   };
-  // allow candidate to resubmit only while online stage is not complete
-  if (assessment.status === "online_in_progress" || assessment.status === "allocated") {
-    updated.onlineCompletedAt = allAnswered ? now : undefined;
-  }
   return store.put("assessments", updated);
 }
 
@@ -414,10 +456,6 @@ export async function submitAssessorScores(
   if (actor.role !== "assessor" || assessment.assessorId !== actor.id) {
     throw new ServiceError("Only the allocated assessor may score this assessment.", 403);
   }
-  if (!["online_complete", "assessor_scoring"].includes(assessment.status)) {
-    throw new ServiceError(`Scoring not allowed while status is ${assessment.status}.`, 409);
-  }
-
   const [blueprint, questions, role, competencies, enrichment] = await Promise.all([
     getBlueprintByCode(assessment.blueprintCode),
     listQuestions(assessment.roleCode),
@@ -426,6 +464,16 @@ export async function submitAssessorScores(
     listEnrichment(assessment.roleCode),
   ]);
   if (!blueprint || !role) throw new ServiceError("Assessment configuration missing.", 500);
+
+  // Scoring unlocks when the online section is done - or immediately when the
+  // blueprint has no online section at all.
+  const onlineCodes = blueprint.sections.filter((s) => s.delivery === "online").flatMap((s) => s.questionCodes);
+  const scoringUnlocked =
+    ["online_complete", "assessor_scoring"].includes(assessment.status) ||
+    (assessment.status === "allocated" && onlineCodes.length === 0);
+  if (!scoringUnlocked) {
+    throw new ServiceError(`Scoring not allowed while status is ${assessment.status}.`, 409);
+  }
   const byCode = new Map(questions.map((q) => [q.code, q]));
 
   const now = new Date().toISOString();
@@ -481,9 +529,6 @@ export async function recomputeAssessment(assessmentId: string): Promise<Assessm
   const store = getAdapter();
   const assessment = await store.get<Assessment>("assessments", assessmentId);
   if (!assessment) throw new ServiceError("Assessment not found.", 404);
-  if (!assessment.assessorScores.length && !assessment.onlineAnswers.length) {
-    throw new ServiceError("Nothing to score yet.", 409);
-  }
   const [blueprint, questions, role, competencies, enrichment] = await Promise.all([
     getBlueprintByCode(assessment.blueprintCode),
     listQuestions(assessment.roleCode),
@@ -492,6 +537,15 @@ export async function recomputeAssessment(assessmentId: string): Promise<Assessm
     listEnrichment(assessment.roleCode),
   ]);
   if (!blueprint || !role) throw new ServiceError("Assessment configuration missing.", 500);
+  // Guard: recompute must never bypass the assessor. It only runs on data that
+  // has been fully scored (or already has results from a previous computation).
+  const byCode = new Map(questions.map((q) => [q.code, q]));
+  const { complete } = assessorScoringComplete(blueprint, byCode, assessment.assessorScores);
+  const onlineDone =
+    assessment.status !== "allocated" && assessment.status !== "online_in_progress";
+  if (!assessment.results && (!complete || !onlineDone)) {
+    throw new ServiceError("Assessment is not fully scored yet - nothing to recompute.", 409);
+  }
   const results = computeResults({
     role,
     competencies,

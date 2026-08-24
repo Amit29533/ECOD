@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { withUser } from "@/lib/api";
+import { readJson, withUser } from "@/lib/api";
 import { getContent, saveContent } from "@/lib/services";
 import type { ContentCollection } from "@/domain/types";
 
@@ -23,7 +23,8 @@ export async function PUT(request: Request, ctx: { params: Promise<{ collection:
     if (!VALID.includes(collection as ContentCollection)) {
       return NextResponse.json({ error: "Unknown content collection." }, { status: 404 });
     }
-    const body = await request.json();
+    const body = await readJson(request);
+    if (!body) return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
     const records = body?.records;
     if (!Array.isArray(records)) return NextResponse.json({ error: "`records` must be an array." }, { status: 400 });
     await saveContent(collection as ContentCollection, records);

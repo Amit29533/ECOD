@@ -17,3 +17,12 @@ export async function withUser(
     return NextResponse.json({ error: "Unexpected server error." }, { status: 500 });
   }
 }
+
+/** Parse a JSON body defensively: malformed payloads become null (-> 400), never a 500. */
+export async function readJson<T = any>(request: Request): Promise<T | null> {
+  try {
+    return (await request.json()) as T;
+  } catch {
+    return null;
+  }
+}

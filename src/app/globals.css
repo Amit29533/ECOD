@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  @apply bg-slate-100 text-slate-900 antialiased;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+}
+
+/* Small reusable primitives so pages stay terse (Tailwind v4: plain classes, no cross-class @apply) */
+.card {
+  @apply rounded-xl border border-slate-200 bg-white shadow-sm;
+}
+.card-pad {
+  @apply p-5;
+}
+.label {
+  @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500;
+}
+.input {
+  @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200;
+}
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+  @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50;
+}
+.btn-primary {
+  @apply bg-indigo-600 text-white hover:bg-indigo-700;
+}
+.btn-secondary {
+  @apply border border-slate-300 bg-white text-slate-700 hover:bg-slate-50;
+}
+.btn-danger {
+  @apply bg-rose-600 text-white hover:bg-rose-700;
+}
+.th {
+  @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500;
+}
+.td {
+  @apply px-4 py-3 text-sm text-slate-700;
+}
+.row-hover {
+  @apply transition hover:bg-slate-50;
+}

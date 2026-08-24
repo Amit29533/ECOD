@@ -1,0 +1,123 @@
+[
+  {
+    "id": "e-rsa-01",
+    "roleCode": "RSA",
+    "competencyCode": "RSA.DELTA",
+    "title": "Delta Lake Deep Dive (hands-on lab)",
+    "type": "lab",
+    "provider": "Databricks Academy",
+    "durationHrs": 6,
+    "url": "https://www.databricks.com/learn/training/home",
+    "description": "ACID internals, OPTIMIZE/VACUUM, liquid clustering, CDF and time travel with guided exercises."
+  },
+  {
+    "id": "e-rsa-02",
+    "roleCode": "RSA",
+    "competencyCode": "RSA.DELTA",
+    "title": "Lakehouse Architecture Patterns",
+    "type": "reading",
+    "provider": "ECOD curated reading list",
+    "durationHrs": 4,
+    "description": "Medallion design patterns, batch/streaming unification and common anti-patterns, with review questions."
+  },
+  {
+    "id": "e-rsa-03",
+    "roleCode": "RSA",
+    "competencyCode": "RSA.DATAENG",
+    "title": "Delta Live Tables Fundamentals",
+    "type": "course",
+    "provider": "Databricks Academy",
+    "durationHrs": 8,
+    "description": "Pipeline authoring, expectations, apply-changes patterns and pipeline operations."
+  },
+  {
+    "id": "e-rsa-04",
+    "roleCode": "RSA",
+    "competencyCode": "RSA.DATAENG",
+    "title": "PySpark Performance Tuning Lab",
+    "type": "lab",
+    "provider": "ECOD lab catalogue",
+    "durationHrs": 6,
+    "description": "Shuffles, skew, AQE, caching strategy and reading Spark UI flame graphs on deliberately broken jobs."
+  },
+  {
+    "id": "e-rsa-05",
+    "roleCode": "RSA",
+    "competencyCode": "RSA.STREAMING",
+    "title": "Structured Streaming: Watermarks & State Lab",
+    "type": "lab",
+    "provider": "ECOD lab catalogue",
+    "durationHrs": 5,
+    "description": "Build windowed aggregations with realistic late data; tune watermarks; measure state growth; idempotent Delta sinks."
+  },
+  {
+    "id": "e-rsa-06",
+    "roleCode": "RSA",
+    "competencyCode": "RSA.GOVERNANCE",
+    "title": "Unity Catalog Migration Workshop",
+    "type": "course",
+    "provider": "Databricks Academy",
+    "durationHrs": 6,
+    "description": "Metastore architecture, storage credentials, external locations, SYNC tooling and grant migration."
+  },
+  {
+    "id": "e-rsa-07",
+    "roleCode": "RSA",
+    "competencyCode": "RSA.GOVERNANCE",
+    "title": "Lakehouse Security Best Practices",
+    "type": "reading",
+    "provider": "ECOD curated reading list",
+    "durationHrs": 3,
+    "description": "Row filters, column masks, entitlement process design, audit and lineage for regulated environments."
+  },
+  {
+    "id": "e-rsa-08",
+    "roleCode": "RSA",
+    "competencyCode": "RSA.SQLPERF",
+    "title": "DBSQL Performance & Photon Lab",
+    "type": "lab",
+    "provider": "ECOD lab catalogue",
+    "durationHrs": 4,
+    "description": "Warehouse sizing, query profiles, statistics and Photon-accelerated workloads."
+  },
+  {
+    "id": "e-rsa-09",
+    "roleCode": "RSA",
+    "competencyCode": "RSA.CLOUDSEC",
+    "title": "Cloud Networking for Databricks (Private Connectivity)",
+    "type": "course",
+    "provider": "Databricks Academy",
+    "durationHrs": 5,
+    "description": "VPC/VNet design, secure cluster connectivity, Private Link deployment patterns across AWS and Azure."
+  },
+  {
+    "id": "e-rsa-10",
+    "roleCode": "RSA",
+    "competencyCode": "RSA.PLATFORM",
+    "title": "Workspace Administration Essentials",
+    "type": "course",
+    "provider": "Databricks Academy",
+    "durationHrs": 4,
+    "description": "Compute models, policies, RBAC, environment strategy and platform operations."
+  },
+  {
+    "id": "e-rsa-11",
+    "roleCode": "RSA",
+    "competencyCode": "RSA.ARCHCONSULT",
+    "title": "Architecture Storytelling & Executive Communication",
+    "type": "course",
+    "provider": "ECOD partner faculty",
+    "durationHrs": 8,
+    "description": "Turning technical designs into decision narratives; stakeholder mapping; handling hostile Q&A; recorded practice with feedback."
+  },
+  {
+    "id": "e-rsa-12",
+    "roleCode": "RSA",
+    "competencyCode": "RSA.STREAMING",
+    "title": "Capstone: Exactly-Once Streaming Platform Project",
+    "type": "project",
+    "provider": "ECOD enrichment programme",
+    "durationHrs": 12,
+    "description": "Build, document and defend an end-to-end streaming pipeline with duplicate/late data and a reprocessing requirement."
+  }
+]

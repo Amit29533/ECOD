@@ -1,0 +1,90 @@
+[
+  {
+    "id": "comp-rsa-01",
+    "roleCode": "RSA",
+    "code": "RSA.PLATFORM",
+    "name": "Databricks Platform & Workspace Operations",
+    "group": "Platform",
+    "description": "Workspace administration, compute models (all-purpose clusters, SQL warehouses, serverless), RBAC, environment/workspace strategy and platform operations.",
+    "weight": 12,
+    "threshold": 70,
+    "order": 1
+  },
+  {
+    "id": "comp-rsa-02",
+    "roleCode": "RSA",
+    "code": "RSA.GOVERNANCE",
+    "name": "Unity Catalog, Security & Governance",
+    "group": "Platform",
+    "description": "Unity Catalog architecture (metastores, catalogs, schemas), grants model, lineage, row filters/column masks, audited access, SCIM and migration from the hive_metastore.",
+    "weight": 12,
+    "threshold": 70,
+    "order": 2
+  },
+  {
+    "id": "comp-rsa-03",
+    "roleCode": "RSA",
+    "code": "RSA.DELTA",
+    "name": "Delta Lake & Lakehouse Architecture",
+    "group": "Data Engineering",
+    "description": "Delta Lake internals (ACID, time travel, OPTIMIZE/VACUUM, liquid clustering), medallion architecture and lakehouse design patterns.",
+    "weight": 14,
+    "threshold": 70,
+    "order": 3
+  },
+  {
+    "id": "comp-rsa-04",
+    "roleCode": "RSA",
+    "code": "RSA.DATAENG",
+    "name": "Spark Data Engineering & Delta Live Tables",
+    "group": "Data Engineering",
+    "description": "PySpark fundamentals, job/partition/shuffle mechanics, performance troubleshooting, Delta Live Tables pipelines, expectations and data quality engineering.",
+    "weight": 14,
+    "threshold": 70,
+    "order": 4
+  },
+  {
+    "id": "comp-rsa-05",
+    "roleCode": "RSA",
+    "code": "RSA.STREAMING",
+    "name": "Structured Streaming & Real-Time Processing",
+    "group": "Data Engineering",
+    "description": "Structured Streaming sources/sinks, triggers, watermarking and late data, state management, exactly-once patterns and streaming architecture.",
+    "weight": 10,
+    "threshold": 65,
+    "order": 5
+  },
+  {
+    "id": "comp-rsa-06",
+    "roleCode": "RSA",
+    "code": "RSA.SQLPERF",
+    "name": "SQL & Performance Optimisation",
+    "group": "Data Engineering",
+    "description": "ANSI SQL and Databricks SQL fluency, warehouse sizing/scaling, Photon, query tuning, statistics and incremental modelling (SCD, merge patterns).",
+    "weight": 10,
+    "threshold": 70,
+    "order": 6
+  },
+  {
+    "id": "comp-rsa-07",
+    "roleCode": "RSA",
+    "code": "RSA.CLOUDSEC",
+    "name": "Cloud Infrastructure & Networking",
+    "group": "Cloud & Infrastructure",
+    "description": "Cloud fundamentals across AWS/Azure/GCP as they apply to Databricks: VPC/VNet design, secure cluster connectivity/PrivateLink, storage access patterns, identity plumbing and cost controls.",
+    "weight": 10,
+    "threshold": 65,
+    "order": 7
+  },
+  {
+    "id": "comp-rsa-08",
+    "roleCode": "RSA",
+    "code": "RSA.ARCHCONSULT",
+    "name": "Solution Architecture & Customer Engagement",
+    "group": "Consulting",
+    "description": "End-to-end solution design, requirements discovery, trade-off analysis, migration strategy, executive communication and acting as a trusted technical advisor inside a customer account.",
+    "weight": 18,
+    "threshold": 75,
+    "order": 8
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "bp-rsa-std-v1",
+    "code": "RSA-STD-V1",
+    "roleCode": "RSA",
+    "name": "RSA Standard Assessment v1",
+    "version": "1.0",
+    "passMark": 70,
+    "sections": [
+      {
+        "id": "sec-a",
+        "name": "Section A - Knowledge Check",
+        "delivery": "online",
+        "instructions": "Multiple-choice, auto-scored. Complete in one sitting (~25 minutes). No external resources.",
+        "questionCodes": [
+          "Q-RSA-001",
+          "Q-RSA-002",
+          "Q-RSA-003",
+          "Q-RSA-004",
+          "Q-RSA-005",
+          "Q-RSA-006",
+          "Q-RSA-007",
+          "Q-RSA-008",
+          "Q-RSA-009",
+          "Q-RSA-010",
+          "Q-RSA-011",
+          "Q-RSA-012"
+        ],
+        "weight": 40
+      },
+      {
+        "id": "sec-b",
+        "name": "Section B - Technical Deep-Dive",
+        "delivery": "assessor",
+        "instructions": "Written responses reviewed by the allocated assessor against a quality rubric. 60 minutes.",
+        "questionCodes": ["Q-RSA-101", "Q-RSA-102", "Q-RSA-103"],
+        "weight": 25
+      },
+      {
+        "id": "sec-c",
+        "name": "Section C - Case Study",
+        "delivery": "assessor",
+        "instructions": "Two customer scenarios. Assessor scores each against five-point criteria rubrics; evidence notes are mandatory. 90 minutes.",
+        "questionCodes": ["Q-RSA-201", "Q-RSA-202"],
+        "weight": 35
+      }
+    ],
+    "active": true
+  }
+]

@@ -1,0 +1,45 @@
+[
+  {
+    "id": "u-admin",
+    "name": "Ada Okafor",
+    "email": "admin@ecod.io",
+    "role": "admin",
+    "title": "Platform Operations Lead",
+    "password": "admin123!",
+    "active": true
+  },
+  {
+    "id": "u-assessor-1",
+    "name": "Dr. Kavitha Rao",
+    "email": "kavitha.rao@ecod.io",
+    "role": "assessor",
+    "title": "Principal Assessor - Databricks",
+    "password": "assess123!",
+    "active": true
+  },
+  {
+    "id": "u-assessor-2",
+    "name": "Marcus Lin",
+    "email": "marcus.lin@ecod.io",
+    "role": "assessor",
+    "title": "Assessor - Data Engineering",
+    "password": "assess123!",
+    "active": true
+  },
+  {
+    "id": "u-cand-priya",
+    "name": "Priya Nair",
+    "email": "priya.nair@example.io",
+    "role": "candidate",
+    "password": "cand123!",
+    "active": true
+  },
+  {
+    "id": "u-cand-arjun",
+    "name": "Arjun Mehta",
+    "email": "arjun.mehta@example.io",
+    "role": "candidate",
+    "password": "cand123!",
+    "active": true
+  }
+]

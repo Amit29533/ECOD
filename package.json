@@ -1,0 +1,31 @@
+{
+  "name": "ecod-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ECOD - Enterprise Capability on Demand. Candidate -> Role -> Assessment -> Gap -> Enrichment -> Validation -> Enterprise Ready.",
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0 -p 3000",
+    "build": "next build",
+    "start": "next start -H 0.0.0.0 -p 3000",
+    "typecheck": "tsc --noEmit",
+    "seed": "tsx scripts/seed.ts",
+    "seed:reset": "tsx scripts/seed.ts --reset",
+    "demo:e2e": "tsx scripts/e2e-demo.ts",
+    "airtable:setup": "tsx scripts/airtable-setup.ts"
+  },
+  "dependencies": {
+    "next": "15.3.3",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.8",
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.5",
+    "@types/react-dom": "^19.1.5",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.8",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,11 @@
+[
+  {
+    "id": "role-rsa",
+    "code": "RSA",
+    "title": "Resident Solutions Architect",
+    "technology": "Databricks",
+    "description": "Embeds with enterprise customers as a resident Databricks Solutions Architect. Owns solution design, data engineering standards, governance enablement and technical stakeholder management across the lakehouse platform.",
+    "passMark": 70,
+    "active": true
+  }
+]

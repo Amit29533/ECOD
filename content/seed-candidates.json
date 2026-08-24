@@ -1,0 +1,46 @@
+[
+  {
+    "id": "cand-priya",
+    "code": "CAND-1001",
+    "name": "Priya Nair",
+    "email": "priya.nair@example.io",
+    "phone": "+91 98xxxxxx01",
+    "location": "Bengaluru, India",
+    "timezone": "Asia/Kolkata",
+    "currentRole": "Senior Data Engineer",
+    "yearsExperience": 9,
+    "linkedinUrl": "https://linkedin.com/in/example-priya",
+    "cvSummary": "Nine years building batch and streaming pipelines on AWS. Led a 6-person team migrating a Teradata estate (12 TB) to EMR/Delta. Strong PySpark and SQL; customer-facing design reviews experience.",
+    "skills": ["PySpark", "SQL", "Airflow", "Python", "Kafka", "dbt"],
+    "technologies": ["Databricks", "AWS", "Delta Lake", "Teradata", "Snowflake"],
+    "source": "Referral - partner network",
+    "intakeNotes": "Referred for RSA track after strong performance on partner engagement. Availability: 4 weeks notice.",
+    "internal": {
+      "commercialTerms": "Standard RSA rate card pending; margin target 30%.",
+      "clientNotes": "Pipeline: Acme Bank RSA slot expected Q4. Strong fit for regulated-industry accounts.",
+      "rating": "A"
+    }
+  },
+  {
+    "id": "cand-arjun",
+    "code": "CAND-1002",
+    "name": "Arjun Mehta",
+    "email": "arjun.mehta@example.io",
+    "phone": "+91 98xxxxxx02",
+    "location": "Pune, India",
+    "timezone": "Asia/Kolkata",
+    "currentRole": "Data Platform Engineer",
+    "yearsExperience": 8,
+    "linkedinUrl": "https://linkedin.com/in/example-arjun",
+    "cvSummary": "Eight years in data platform engineering, last two on Azure Databricks. Built DLT pipelines and Unity Catalog rollout for a mid-size fintech. Solid fundamentals, lighter on streaming at scale and customer-facing architecture work.",
+    "skills": ["PySpark", "SQL", "Azure Data Factory", "Python"],
+    "technologies": ["Databricks", "Azure", "Delta Lake", "Unity Catalog"],
+    "source": "Inbound - careers page",
+    "intakeNotes": "Self-nominated for RSA track. Prefers async communication; available immediately.",
+    "internal": {
+      "commercialTerms": "To be discussed post-assessment.",
+      "clientNotes": "No client allocated yet.",
+      "rating": "B+"
+    }
+  }
+]

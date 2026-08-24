@@ -1,0 +1,460 @@
+[
+  {
+    "id": "q-rsa-001",
+    "code": "Q-RSA-001",
+    "type": "mcq",
+    "roleCode": "RSA",
+    "delivery": "online",
+    "prompt": "In a Databricks workspace, which mechanism controls which users and groups can attach to a cluster, restart it, and manage its configuration?",
+    "options": [
+      { "id": "a", "text": "SCIM provisioning at the account level" },
+      { "id": "b", "text": "Cluster permissions (CAN_ATTACH_TO, CAN_RESTART, CAN_MANAGE, IS_OWNER)" },
+      { "id": "c", "text": "Unity Catalog GRANT statements on the cluster" },
+      { "id": "d", "text": "Cloud IAM roles attached to the cluster policy" }
+    ],
+    "expectedAnswer": "b",
+    "explanation": "Compute access control is managed with cluster ACLs (CAN_ATTACH_TO / CAN_RESTART / CAN_MANAGE / IS_OWNER). Unity Catalog governs data objects, not compute attach rights; SCIM syncs identity, and IAM governs cloud resources.",
+    "competencyCodes": ["RSA.PLATFORM"],
+    "weight": 1,
+    "difficulty": "foundation",
+    "tags": ["workspace", "rbac", "compute"]
+  },
+  {
+    "id": "q-rsa-002",
+    "code": "Q-RSA-002",
+    "type": "mcq",
+    "roleCode": "RSA",
+    "delivery": "online",
+    "prompt": "A company wants one central point of governance for data assets across 12 workspaces in the same cloud region. What Unity Catalog construct should they create?",
+    "options": [
+      { "id": "a", "text": "One hive_metastore per workspace, linked by external tables" },
+      { "id": "b", "text": "One Unity Catalog metastore for the region, with all 12 workspaces attached to it" },
+      { "id": "c", "text": "One account-level catalog per workspace" },
+      { "id": "d", "text": "A DBFS mount per workspace pointing at shared storage" }
+    ],
+    "expectedAnswer": "b",
+    "explanation": "Unity Catalog deploys one metastore per region (per cloud account), and many workspaces can attach to it. Data is then organised metastore > catalog > schema > object, giving one governance plane.",
+    "competencyCodes": ["RSA.GOVERNANCE"],
+    "weight": 1,
+    "difficulty": "foundation",
+    "tags": ["unity-catalog", "metastore"]
+  },
+  {
+    "id": "q-rsa-003",
+    "code": "Q-RSA-003",
+    "type": "mcq",
+    "roleCode": "RSA",
+    "delivery": "online",
+    "prompt": "Running OPTIMIZE on a Delta table primarily does what?",
+    "options": [
+      { "id": "a", "text": "Refreshes table statistics only" },
+      { "id": "b", "text": "Compacts small files into larger ones, and applies Z-ORDER/liquid clustering keys when specified" },
+      { "id": "c", "text": "Upgrades the Delta reader/writer protocol version" },
+      { "id": "d", "text": "Physically deletes files removed by past UPDATE/DELETE operations" }
+    ],
+    "expectedAnswer": "b",
+    "explanation": "OPTIMIZE compacts small files (bin-packing) and can apply data layout (Z-ORDER or liquid clustering). Removing files no longer referenced by table state is VACUUM, not OPTIMIZE.",
+    "competencyCodes": ["RSA.DELTA"],
+    "weight": 1,
+    "difficulty": "foundation",
+    "tags": ["delta", "optimize"]
+  },
+  {
+    "id": "q-rsa-004",
+    "code": "Q-RSA-004",
+    "type": "mcq",
+    "roleCode": "RSA",
+    "delivery": "online",
+    "prompt": "On recent Databricks runtimes, liquid clustering is generally preferred over Z-ORDER because it:",
+    "options": [
+      { "id": "a", "text": "Reclusters the entire table on every write" },
+      { "id": "b", "text": "Clusters data incrementally as it arrives and targets keys without sorting the whole table up front; keys can also change later" },
+      { "id": "c", "text": "Eliminates the need for partitioning in every workload" },
+      { "id": "d", "text": "Applies only to Databricks SQL warehouses, not jobs clusters" }
+    ],
+    "expectedAnswer": "b",
+    "explanation": "Liquid clustering lays out data incrementally and re-clusters in the background, avoids full-table sorts, allows changing clustering keys, and removes most cases where explicit partitioning is needed (not all).",
+    "competencyCodes": ["RSA.DELTA"],
+    "weight": 1,
+    "difficulty": "intermediate",
+    "tags": ["delta", "liquid-clustering"]
+  },
+  {
+    "id": "q-rsa-005",
+    "code": "Q-RSA-005",
+    "type": "mcq",
+    "roleCode": "RSA",
+    "delivery": "online",
+    "prompt": "In Delta Live Tables, which construct drops records that fail a data-quality rule while letting the rest of the batch through?",
+    "options": [
+      { "id": "a", "text": "CONSTRAINT ... ON FAILURE HALT" },
+      { "id": "b", "text": "EXPECT (order_id IS NOT NULL) ON VIOLATION DROP ROW" },
+      { "id": "c", "text": "expect_all() with an automatically created quarantine table" },
+      { "id": "d", "text": "WARN ON VIOLATION" }
+    ],
+    "expectedAnswer": "b",
+    "explanation": "EXPECT ... ON VIOLATION DROP ROW drops failing rows. Omitting the ON VIOLATION clause keeps invalid records but records the metric; quarantine handling is something you build alongside expectations.",
+    "competencyCodes": ["RSA.DATAENG"],
+    "weight": 1,
+    "difficulty": "intermediate",
+    "tags": ["dlt", "data-quality"]
+  },
+  {
+    "id": "q-rsa-006",
+    "code": "Q-RSA-006",
+    "type": "mcq",
+    "roleCode": "RSA",
+    "delivery": "online",
+    "prompt": "A PySpark join is slow. The Spark UI shows one task running far longer than the others. What is the most likely cause and first fix?",
+    "options": [
+      { "id": "a", "text": "Data skew on the join key - inspect key distribution, enable AQE skew handling, or salt/broadcast where appropriate" },
+      { "id": "b", "text": "Too many shuffle partitions - reduce spark.sql.shuffle.partitions only" },
+      { "id": "c", "text": "Driver memory pressure - increase driver memory" },
+      { "id": "d", "text": "The dataset is cached too aggressively - unpersist all datasets" }
+    ],
+    "expectedAnswer": "a",
+    "explanation": "One long-running task with others finished is the classic skew signature. Remedies: AQE skew join handling, salting hot keys, broadcasting small sides, or isolating hot keys.",
+    "competencyCodes": ["RSA.DATAENG"],
+    "weight": 1,
+    "difficulty": "intermediate",
+    "tags": ["pyspark", "performance", "skew"]
+  },
+  {
+    "id": "q-rsa-007",
+    "code": "Q-RSA-007",
+    "type": "mcq",
+    "roleCode": "RSA",
+    "delivery": "online",
+    "prompt": "Defining a watermark on event_time in a streaming query solves which problem?",
+    "options": [
+      { "id": "a", "text": "It de-duplicates all incoming records automatically" },
+      { "id": "b", "text": "It bounds how late an event can arrive and lets the engine drop too-late events and clean up state for windowed aggregates" },
+      { "id": "c", "text": "It guarantees exactly-once delivery to any sink" },
+      { "id": "d", "text": "It orders events within each micro-batch by event time" }
+    ],
+    "expectedAnswer": "b",
+    "explanation": "A watermark declares the max expected lateness; the engine can then finalise windows, evict state and drop events later than the watermark. Exactly-once additionally requires idempotent/transactional sinks.",
+    "competencyCodes": ["RSA.STREAMING"],
+    "weight": 1,
+    "difficulty": "foundation",
+    "tags": ["streaming", "watermark"]
+  },
+  {
+    "id": "q-rsa-008",
+    "code": "Q-RSA-008",
+    "type": "mcq",
+    "roleCode": "RSA",
+    "delivery": "online",
+    "prompt": "You must write streaming results into an existing Delta table with exactly-once semantics across job restarts and failures. The most reliable approach is:",
+    "options": [
+      { "id": "a", "text": "Append to a Parquet sink and reconcile nightly" },
+      { "id": "b", "text": "Use foreachBatch with MERGE keyed on a deterministic transaction/business key, making writes idempotent" },
+      { "id": "c", "text": "Write to the memory sink and periodically flush to Delta" },
+      { "id": "d", "text": "Use continuous processing mode with append mode" }
+    ],
+    "expectedAnswer": "b",
+    "explanation": "foreachBatch gives you the batch handle to run idempotent MERGE/upserts keyed deterministically; combined with checkpointing, restarts do not duplicate rows.",
+    "competencyCodes": ["RSA.STREAMING"],
+    "weight": 1,
+    "difficulty": "intermediate",
+    "tags": ["streaming", "exactly-once", "foreachbatch"]
+  },
+  {
+    "id": "q-rsa-009",
+    "code": "Q-RSA-009",
+    "type": "mcq",
+    "roleCode": "RSA",
+    "delivery": "online",
+    "prompt": "Which statement about Photon is accurate?",
+    "options": [
+      { "id": "a", "text": "It is a native vectorised engine that accelerates SQL scans, joins and aggregations without rewriting queries" },
+      { "id": "b", "text": "It accelerates Python UDF-heavy workloads by JIT-compiling them" },
+      { "id": "c", "text": "It is a replacement storage format for Delta Lake" },
+      { "id": "d", "text": "It requires liquid clustering to be enabled on every table" }
+    ],
+    "expectedAnswer": "a",
+    "explanation": "Photon is a C++ vectorised query engine that speeds up SQL/data-frame scan-join-aggregate workloads transparently; heavy Python UDF work does not benefit.",
+    "competencyCodes": ["RSA.SQLPERF"],
+    "weight": 1,
+    "difficulty": "foundation",
+    "tags": ["photon", "dbsql", "performance"]
+  },
+  {
+    "id": "q-rsa-010",
+    "code": "Q-RSA-010",
+    "type": "mcq",
+    "roleCode": "RSA",
+    "delivery": "online",
+    "prompt": "A regulated customer requires that traffic between Databricks compute, cloud storage and control-plane services never traverses the public internet. What do you deploy?",
+    "options": [
+      { "id": "a", "text": "An IP access list on the workspace" },
+      { "id": "b", "text": "SCIM provisioning with an identity provider" },
+      { "id": "c", "text": "Private connectivity - Private Link/private endpoints with secure cluster connectivity (no public IPs)" },
+      { "id": "d", "text": "Table access control on all Unity Catalog objects" }
+    ],
+    "expectedAnswer": "c",
+    "explanation": "Private Link / private endpoints plus secure cluster connectivity (agent-based, no public IP) keeps data-plane and control-plane traffic on private networking. IP access lists and SCIM address different concerns.",
+    "competencyCodes": ["RSA.CLOUDSEC"],
+    "weight": 1,
+    "difficulty": "intermediate",
+    "tags": ["networking", "privatelink", "security"]
+  },
+  {
+    "id": "q-rsa-011",
+    "code": "Q-RSA-011",
+    "type": "mcq",
+    "roleCode": "RSA",
+    "delivery": "online",
+    "prompt": "With Unity Catalog on AWS, the correct way to give analysts access to datasets in S3 is:",
+    "options": [
+      { "id": "a", "text": "Store AWS access keys in a notebook and read via s3a://" },
+      { "id": "b", "text": "Create a storage credential (IAM role) and external location in Unity Catalog, then GRANT access to the relevant objects" },
+      { "id": "c", "text": "Mount the bucket with keys injected via cluster init scripts" },
+      { "id": "d", "text": "Add the workspace's egress IPs to the bucket policy" }
+    ],
+    "expectedAnswer": "b",
+    "explanation": "UC abstracts cloud storage behind storage credentials (IAM role / managed identity) and external locations; users only ever receive UC GRANTs, never keys.",
+    "competencyCodes": ["RSA.CLOUDSEC"],
+    "weight": 1,
+    "difficulty": "intermediate",
+    "tags": ["aws", "unity-catalog", "storage"]
+  },
+  {
+    "id": "q-rsa-012",
+    "code": "Q-RSA-012",
+    "type": "mcq",
+    "roleCode": "RSA",
+    "delivery": "online",
+    "prompt": "In the medallion architecture, the silver layer is best described as:",
+    "options": [
+      { "id": "a", "text": "The raw, immutable landing zone for source data" },
+      { "id": "b", "text": "Cleaned, conformed and validated data representing business entities and relationships" },
+      { "id": "c", "text": "Aggregated, consumption-ready KPI marts" },
+      { "id": "d", "text": "A long-term archive tier on cold storage" }
+    ],
+    "expectedAnswer": "b",
+    "explanation": "Bronze = raw ingest as-is; silver = cleansed/conformed/validated business entities (often SCD history); gold = aggregated, consumption-facing marts.",
+    "competencyCodes": ["RSA.ARCHCONSULT"],
+    "weight": 1,
+    "difficulty": "foundation",
+    "tags": ["medallion", "architecture"]
+  },
+  {
+    "id": "q-rsa-101",
+    "code": "Q-RSA-101",
+    "type": "short-answer",
+    "roleCode": "RSA",
+    "delivery": "assessor",
+    "prompt": "Design an end-to-end pipeline for an 'orders' domain: incremental ingest from a CDC source, SCD Type 2 history in silver, and gold aggregates refreshed hourly. Sketch the flow, name the Delta/Databricks features you would use, and state one approach you would reject and why.",
+    "expectedAnswer": "Strong answers cover: Auto Loader or CDC/CDF-based ingest into bronze; Change Data Feed / APPLY CHANGES INTO (or MERGE with predicate on sequence) for SCD2 in silver; liquid clustering on keys, OPTIMIZE + VACUUM cadence; expectations/constraints for quality; gold via DLT materialised views, dbt or scheduled jobs; rejects full daily recompute (cost/latency) or per-row MERGE without clustering (small-file/skew issues). Look for awareness of late/upsert ordering and idempotent re-runs.",
+    "rubric": [
+      {
+        "code": "QUALITY",
+        "label": "Response quality",
+        "weight": 1,
+        "levels": [
+          { "score": 0, "label": "Inadequate", "descriptor": "Incorrect or superficial; misses CDC, SCD2 or medallion basics." },
+          { "score": 40, "label": "Developing", "descriptor": "Broadly right flow but vague on mechanics (no CDF/MERGE specifics, no rejected alternative)." },
+          { "score": 70, "label": "Proficient", "descriptor": "Correct, concrete design with named features, sane quality/ops considerations and a justified rejection." },
+          { "score": 100, "label": "Expert", "descriptor": "Proficient plus edge cases: late data ordering, idempotency, cost and reprocessing strategy; trade-offs articulated crisply." }
+        ]
+      }
+    ],
+    "competencyCodes": ["RSA.DATAENG", "RSA.SQLPERF"],
+    "weight": 2,
+    "difficulty": "intermediate",
+    "tags": ["pipeline-design", "scd2", "cdc"]
+  },
+  {
+    "id": "q-rsa-102",
+    "code": "Q-RSA-102",
+    "type": "short-answer",
+    "roleCode": "RSA",
+    "delivery": "assessor",
+    "prompt": "A customer has 200 hive_metastore tables across 3 workspaces and wants to move to Unity Catalog with minimal downtime. Outline the migration: assessment, prerequisites, migration mechanics, permissions, cutover and rollback.",
+    "expectedAnswer": "Strong answers cover: run a readiness/lineage assessment (e.g. UCX inventory of external tables, mounts, local paths, ACLs); create storage credentials + external locations first; migrate external tables via SYNC/UCX (managed tables require deep-clone/backfill); sync or re-model grants; per-catalog or per-schema phased cutover with legacy read-only fallback; rollback plan keeping hive_metastore intact and external data untouched; comms/training for users; post-migration verification via lineage and audit.",
+    "rubric": [
+      {
+        "code": "QUALITY",
+        "label": "Response quality",
+        "weight": 1,
+        "levels": [
+          { "score": 0, "label": "Inadequate", "descriptor": "Would attempt a risky big-bang move; no prerequisites understood." },
+          { "score": 40, "label": "Developing", "descriptor": "Knows UC concepts but the plan lacks sequencing, permissions or rollback thinking." },
+          { "score": 70, "label": "Proficient", "descriptor": "Phased, tool-aware plan (UCX/SYNC), handles external vs managed tables, includes grants and rollback." },
+          { "score": 100, "label": "Expert", "descriptor": "Proficient plus organisational readiness: stakeholder comms, validation/audit steps, and sharp treatment of managed-table deep clone cost and cutover cutover criteria." }
+        ]
+      }
+    ],
+    "competencyCodes": ["RSA.GOVERNANCE"],
+    "weight": 2,
+    "difficulty": "advanced",
+    "tags": ["unity-catalog", "migration"]
+  },
+  {
+    "id": "q-rsa-103",
+    "code": "Q-RSA-103",
+    "type": "short-answer",
+    "roleCode": "RSA",
+    "delivery": "assessor",
+    "prompt": "Clickstream events arrive out of order, some up to two hours late, at ~20,000 events/second. Describe the Structured Streaming pipeline you would build: source, parsing, watermarking/windowing choices, de-duplication, sink, and how you guarantee idempotent writes.",
+    "expectedAnswer": "Strong answers cover: Kafka/Event Hubs source (Auto Loader for files), parse + validate early, event-time windows with watermark > 2h (e.g. 3h), dropDuplicatesWithinWatermark or keyed de-dup, foreachBatch MERGE into Delta (idempotent on event_id), trigger choice (Available Now or fixed interval), checkpointing, and monitoring (input rate, state size, batch duration). Bonus: RocksDB state store for large state, schema evolution, quarantine topic/path for malformed events.",
+    "rubric": [
+      {
+        "code": "QUALITY",
+        "label": "Response quality",
+        "weight": 1,
+        "levels": [
+          { "score": 0, "label": "Inadequate", "descriptor": "No watermark/state awareness; treats streaming as micro-batch SQL." },
+          { "score": 40, "label": "Developing", "descriptor": "Reasonable skeleton but weak on late data, state bounds or idempotency." },
+          { "score": 70, "label": "Proficient", "descriptor": "Correct watermarking, keyed idempotent sink, checkpoint/triggers handled, sane de-dup approach." },
+          { "score": 100, "label": "Expert", "descriptor": "Proficient plus state-store/scale awareness, monitoring, schema evolution and failure-mode reasoning (source lag, poison batches)." }
+        ]
+      }
+    ],
+    "competencyCodes": ["RSA.STREAMING"],
+    "weight": 2,
+    "difficulty": "advanced",
+    "tags": ["streaming", "watermark", "idempotency"]
+  },
+  {
+    "id": "q-rsa-201",
+    "code": "Q-RSA-201",
+    "type": "case-study",
+    "roleCode": "RSA",
+    "delivery": "assessor",
+    "context": "Regional retail bank, ~40 TB on Teradata, 900 scheduled jobs, strict governance (row-level restriction of customer data by region; auditors require lineage and access history). CDO-sponsored programme, 9-month target, existing team of 15 SQL developers with little Spark experience. Budget pressure after a failed first-wave 'lift and shift' attempt.",
+    "prompt": "Propose the target lakehouse architecture on Databricks, the migration approach for 900 jobs, the governance model, and how you would de-risk the programme. State your assumptions.",
+    "expectedEvidence": "Medallion layout with rationale; Delta + DBSQL to leverage SQL skills; phased migration by subject area with dual-run/reconciliation; Unity Catalog with external locations, row filters/column masks by region, lineage + audit logs; training plan (SQL-first); explicit assumptions and risks; commercial/execution realism (what failed last time and why); success criteria and a Q&A-friendly executive narrative.",
+    "rubric": [
+      {
+        "code": "REQ",
+        "label": "Requirements & constraints",
+        "competencyCode": "RSA.ARCHCONSULT",
+        "weight": 1,
+        "levels": [
+          { "score": 0, "label": "Inadequate", "descriptor": "Ignores governance, timeline or team-skill constraints; jumps to technology." },
+          { "score": 40, "label": "Developing", "descriptor": "Restates the brief; surfaces some constraints but misses governance or organisational realities." },
+          { "score": 70, "label": "Proficient", "descriptor": "Explicit assumptions; balances regulatory, skills, budget and timeline constraints; calls out the failed first wave." },
+          { "score": 100, "label": "Expert", "descriptor": "Proficient plus prioritised constraints, success criteria, and stakeholder-by-stakeholder concerns (CDO, risk, engineering)." }
+        ]
+      },
+      {
+        "code": "ARCH",
+        "label": "Architecture & component selection",
+        "competencyCode": "RSA.ARCHCONSULT",
+        "weight": 1,
+        "levels": [
+          { "score": 0, "label": "Inadequate", "descriptor": "Incoherent or purely product-marketing answer." },
+          { "score": 40, "label": "Developing", "descriptor": "Generic lakehouse diagram in words; weak fit to SQL-heavy team and workloads." },
+          { "score": 70, "label": "Proficient", "descriptor": "Fit-for-purpose medallion design; DBSQL/SQL-first transformation path; sensible compute and storage choices." },
+          { "score": 100, "label": "Expert", "descriptor": "Proficient plus multi-workspace/environment strategy, CI/CD for assets, and clear rationale for every major component including what was deliberately excluded." }
+        ]
+      },
+      {
+        "code": "GOV",
+        "label": "Governance & security",
+        "competencyCode": "RSA.GOVERNANCE",
+        "weight": 1,
+        "levels": [
+          { "score": 0, "label": "Inadequate", "descriptor": "No credible governance answer; row-level access unaddressed." },
+          { "score": 40, "label": "Developing", "descriptor": "Mentions Unity Catalog but vague on row filters/masks, lineage or audit needs." },
+          { "score": 70, "label": "Proficient", "descriptor": "UC catalog/schema layout, row filters or column masks for regional restriction, lineage + audit logging for regulators." },
+          { "score": 100, "label": "Expert", "descriptor": "Proficient plus entitlement process design (who approves access), credential/identity strategy and audit-retention realism." }
+        ]
+      },
+      {
+        "code": "MIG",
+        "label": "Migration approach & trade-offs",
+        "competencyCode": "RSA.DELTA",
+        "weight": 1,
+        "levels": [
+          { "score": 0, "label": "Inadequate", "descriptor": "Big-bang rewrite with no reconciliation or rollback." },
+          { "score": 40, "label": "Developing", "descriptor": "Phased by table count rather than business value; dual-run mentioned without reconciliation detail." },
+          { "score": 70, "label": "Proficient", "descriptor": "Subject-area waves, automated conversion for SQL-heavy jobs, dual-run with reconciliation gates, rollback path." },
+          { "score": 100, "label": "Expert", "descriptor": "Proficient plus job-triage economics (convert vs retire vs rewrite), reference-data-first sequencing and a quantified de-risking plan." }
+        ]
+      },
+      {
+        "code": "COMMS",
+        "label": "Executive communication & value",
+        "competencyCode": "RSA.ARCHCONSULT",
+        "weight": 1,
+        "levels": [
+          { "score": 0, "label": "Inadequate", "descriptor": "Cannot explain the plan to a CDO; no value narrative." },
+          { "score": 40, "label": "Developing", "descriptor": "Some structure but buried in tech detail; unclear milestones." },
+          { "score": 70, "label": "Proficient", "descriptor": "Crisp milestones, cost/TCR narrative, honest risks with mitigations." },
+          { "score": 100, "label": "Expert", "descriptor": "Proficient plus a compelling value story tied to business outcomes and a plan to rebuild trust after the failed first wave." }
+        ]
+      }
+    ],
+    "competencyCodes": ["RSA.ARCHCONSULT", "RSA.DELTA", "RSA.GOVERNANCE"],
+    "weight": 3,
+    "difficulty": "advanced",
+    "tags": ["case-study", "migration", "governance", "architecture"]
+  },
+  {
+    "id": "q-rsa-202",
+    "code": "Q-RSA-202",
+    "type": "case-study",
+    "roleCode": "RSA",
+    "delivery": "assessor",
+    "context": "Industrial IoT customer: ~50,000 sensors on cellular connections, bursty traffic (device reconnects re-send windows of data, so duplicates and events up to 4 hours late are normal). Requirement: freshness within 5 minutes for operational dashboards, plus a daily reprocessing window for corrected device data. Cost-sensitive; small platform team of 4.",
+    "prompt": "Design the ingestion, processing and serving architecture on Databricks. Cover duplicate and late-data handling, the reprocessing path, and how you would keep the platform operable and affordable for a 4-person team.",
+    "expectedEvidence": "Event Hub/Kafka or Auto Loader ingestion; de-dup strategy keyed on device_id+event_ts (dropDuplicatesWithinWatermark or MERGE); watermark sized to lateness (~5h) with state implications acknowledged; 5-min trigger vs Available Now trade-off; Delta as both streaming sink and reprocessing source (CDF/time travel); quarantine for malformed payloads; serverless/small-cluster sizing or serverless SQL for dashboards; monitoring (lag, state size, late-event metrics) and alerting; explicit trade-offs between freshness, state size and cost.",
+    "rubric": [
+      {
+        "code": "STREAM",
+        "label": "Streaming design correctness",
+        "competencyCode": "RSA.STREAMING",
+        "weight": 1,
+        "levels": [
+          { "score": 0, "label": "Inadequate", "descriptor": "Batch-only thinking; duplicates/lateness unhandled." },
+          { "score": 40, "label": "Developing", "descriptor": "Streaming skeleton but watermark/de-dup mechanics wrong or missing." },
+          { "score": 70, "label": "Proficient", "descriptor": "Correct watermarking for 4h lateness, keyed de-dup, idempotent sink, sensible triggers for 5-min freshness." },
+          { "score": 100, "label": "Expert", "descriptor": "Proficient plus failure modes (poison batch, source lag), state-size reasoning and a precise reprocessing design that does not duplicate results." }
+        ]
+      },
+      {
+        "code": "SCALE",
+        "label": "Scalability & state management",
+        "competencyCode": "RSA.STREAMING",
+        "weight": 1,
+        "levels": [
+          { "score": 0, "label": "Inadequate", "descriptor": "No notion of state growth or throughput." },
+          { "score": 40, "label": "Developing", "descriptor": "Mentions scaling but no state store/partitioning strategy." },
+          { "score": 70, "label": "Proficient", "descriptor": "Partitioning by device/time, RocksDB state store or keyed state sizing, and a reprocessing path separated from hot path." },
+          { "score": 100, "label": "Expert", "descriptor": "Proficient plus quantified estimates (events/sec, state bytes), shuffle/skew mitigation for hot devices and schema evolution story." }
+        ]
+      },
+      {
+        "code": "COST",
+        "label": "Cost-conscious engineering",
+        "competencyCode": "RSA.CLOUDSEC",
+        "weight": 1,
+        "levels": [
+          { "score": 0, "label": "Inadequate", "descriptor": "Over-provisioned design; ignores the cost constraint entirely." },
+          { "score": 40, "label": "Developing", "descriptor": "Generic 'use autoscaling' without sizing or tagging strategy." },
+          { "score": 70, "label": "Proficient", "descriptor": "Right-sized compute (spot/serverless trade-offs), auto-terminate, storage lifecycle and a stated cost envelope." },
+          { "score": 100, "label": "Expert", "descriptor": "Proficient plus unit-cost model (per event/GB), make-vs-buy judgement and a 4-person-team operability plan." }
+        ]
+      },
+      {
+        "code": "OPS",
+        "label": "Operability, reliability & security",
+        "competencyCode": "RSA.CLOUDSEC",
+        "weight": 1,
+        "levels": [
+          { "score": 0, "label": "Inadequate", "descriptor": "No monitoring, alerting or access-control story." },
+          { "score": 40, "label": "Developing", "descriptor": "Mentions monitoring but no SLOs, runbooks or isolation of concerns." },
+          { "score": 70, "label": "Proficient", "descriptor": "Streaming metrics with alerts, quarantine topic, environment separation and UC-based access control for the platform." },
+          { "score": 100, "label": "Expert", "descriptor": "Proficient plus SLO/error budgets, incident runbooks, and a security posture proportionate to a 4-person team (managed services first)." }
+        ]
+      }
+    ],
+    "competencyCodes": ["RSA.STREAMING", "RSA.CLOUDSEC", "RSA.ARCHCONSULT"],
+    "weight": 3,
+    "difficulty": "advanced",
+    "tags": ["case-study", "streaming", "iot", "cost"]
+  }
+]

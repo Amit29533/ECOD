@@ -142,6 +142,13 @@ export async function createUser(input: {
   return store.put("users", user);
 }
 
+/** Invalidate every live session for a user (logout-everywhere / compromise response). */
+export async function revokeUserSessions(userId: string): Promise<void> {
+  const store = getAdapter();
+  const user = await store.get<User>("users", userId);
+  if (user) await store.put("users", { ...user, sessionsValidAfter: Date.now() });
+}
+
 /* ------------------------------------------------------------------ */
 /* Candidates                                                           */
 /* ------------------------------------------------------------------ */
@@ -299,10 +306,15 @@ export async function saveContent(collection: ContentCollection, records: any[])
   if (!Array.isArray(records) || records.some((r) => !r?.id || typeof r.id !== "string")) {
     throw new ServiceError("Content must be a JSON array of records each having a string `id`.");
   }
+  if (records.length === 0) {
+    // guard against accidental wipe-all from the editor; deleting content is a deliberate file/git operation
+    throw new ServiceError("Refusing to save an empty content collection (this would wipe the live configuration).", 400);
+  }
   validateContent(collection, records);
   const store = getAdapter();
   await store.replaceAll(collection, records);
-  if (store.kind === "json") writeContentFile(collection, records);
+  // write-back keeps /content reviewable in git; tests disable via ECOD_CONTENT_WRITEBACK=0
+  if (store.kind === "json" && process.env.ECOD_CONTENT_WRITEBACK !== "0") writeContentFile(collection, records);
 }
 
 /* ------------------------------------------------------------------ */

@@ -71,10 +71,14 @@ Guide with schemas and worked examples (add a new role, add a question, change a
 | Command | Purpose |
 | --- | --- |
 | `npm run dev` / `build` / `start` | Develop / build / run the portal |
+| `npm test` | Unit + integration suite (domain maths, workflow, RBAC, auth crypto, storage; service-layer workflow + error paths) — 38 tests |
+| `npm run test:api` | Black-box HTTP suite against the production build (auth attacks, full RBAC matrix, cross-tenant attempts, workflow integrity, concurrency) — 76 checks |
 | `npm run seed` / `seed:reset` | Sync content + demo data (reset wipes the store first) |
 | `npm run demo:e2e` | Headless end-to-end proof of the assessment flow |
 | `npm run airtable:setup` | Provision + seed an Airtable base |
 | `npm run typecheck` | Strict TypeScript check |
+
+Test campaign results, the defects it caught, and current production-readiness posture (including known pilot-tier limitations): **[docs/PRODUCTION-READINESS.md](docs/PRODUCTION-READINESS.md)**.
 
 ## Repository layout
 

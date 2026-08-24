@@ -24,6 +24,8 @@ export interface User {
   passwordHash: string;
   active: boolean;
   createdAt: string;
+  /** Revocation watermark (epoch ms): session tokens issued before this are invalid. */
+  sessionsValidAfter?: number;
 }
 
 /* ------------------------------------------------------------------ */

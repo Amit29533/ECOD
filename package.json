@@ -8,13 +8,15 @@
     "build": "next build",
     "start": "next start -H 0.0.0.0 -p 3000",
     "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "test:api": "tsx scripts/api-tests.ts",
     "seed": "tsx scripts/seed.ts",
     "seed:reset": "tsx scripts/seed.ts --reset",
     "demo:e2e": "tsx scripts/e2e-demo.ts",
     "airtable:setup": "tsx scripts/airtable-setup.ts"
   },
   "dependencies": {
-    "next": "15.3.3",
+    "next": "^16.3.2",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },

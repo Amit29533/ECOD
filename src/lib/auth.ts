@@ -49,11 +49,13 @@ function sign(payload: string): string {
 }
 
 export function createSessionToken(userId: string): string {
-  const payload = Buffer.from(JSON.stringify({ userId, exp: Date.now() + SESSION_TTL_MS })).toString("base64url");
+  const payload = Buffer.from(
+    JSON.stringify({ userId, iat: Date.now(), exp: Date.now() + SESSION_TTL_MS }),
+  ).toString("base64url");
   return `${payload}.${sign(payload)}`;
 }
 
-export function verifySessionToken(token: string | undefined): { userId: string } | null {
+export function verifySessionToken(token: string | undefined): { userId: string; iat: number; exp: number } | null {
   if (!token) return null;
   const [payload, sig] = token.split(".");
   if (!payload || !sig) return null;
@@ -62,7 +64,7 @@ export function verifySessionToken(token: string | undefined): { userId: string 
   try {
     const data = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
     if (typeof data.userId !== "string" || typeof data.exp !== "number" || data.exp < Date.now()) return null;
-    return { userId: data.userId };
+    return { userId: data.userId, iat: typeof data.iat === "number" ? data.iat : 0, exp: data.exp };
   } catch {
     return null;
   }
@@ -74,7 +76,10 @@ export async function getCurrentUser(): Promise<User | null> {
   const verified = verifySessionToken(jar.get(COOKIE_NAME)?.value);
   if (!verified) return null;
   const user = await store.get<User>("users", verified.userId);
-  return user && user.active ? user : null;
+  if (!user || !user.active) return null;
+  // revocation: tokens issued before the user's sessions were revoked are dead
+  if (user.sessionsValidAfter && verified.iat < user.sessionsValidAfter) return null;
+  return user;
 }
 
 /** Page guard: redirects to login (or the right role home) when needed. */

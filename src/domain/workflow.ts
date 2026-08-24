@@ -57,9 +57,10 @@ export class InvalidTransitionError extends Error {
 }
 
 export function candidateTransitionAllowed(from: CandidateStatus, to: CandidateStatus): boolean {
-  // Forward-jumps within the journey are allowed (assessment may complete fast),
-  // sideways states (on_hold/rejected) follow the explicit graph.
   if (from === to) return true;
+  // "Enterprise ready" is only reachable through independent validation - no
+  // forward-jumping past the validation gate.
+  if (to === "enterprise_ready" && from !== "validation") return false;
   if ((CANDIDATE_TRANSITIONS[from] ?? []).includes(to)) return true;
   // allow forward progression skipping intermediate journey steps
   const fi = CANDIDATE_JOURNEY.indexOf(from);
